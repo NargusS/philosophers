@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 17:11:49 by achane-l          #+#    #+#             */
-/*   Updated: 2022/01/21 19:01:46 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/01/22 19:04:41 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	init_lst_philo(lst_philo *philo_lst, int argc, char **argv)
 		init_my_philo(&philo_lst->philos[i], i);
 		i++;
 	}
-	gettimeofday(&philo_lst->start, NULL);
+	philo_lst->time_start = get_time();
 	pthread_mutex_init(&philo_lst->mutex_philo,NULL);
 	return (1);
 }
@@ -45,7 +45,8 @@ void	init_my_philo(my_philo *the_philo, int my_philo)
 	the_philo->id = my_philo;
 	the_philo->forks = 1;
 	the_philo->count_eats = 0;
-	the_philo->sleep_time = 0;
-	the_philo->eat_time = 0;
-	the_philo->die_time = 0;
+	the_philo->has_sleep= 0;
+	the_philo->has_eat = 0;
+	the_philo->is_dead = 0;
+	the_philo->has_think=0;
 }

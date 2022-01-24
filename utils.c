@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 17:17:37 by achane-l          #+#    #+#             */
-/*   Updated: 2022/01/22 02:07:30 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/01/22 17:36:09 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,16 @@ int atoi_modify(char *arg)
 	if (*arg != '\0')
 		return (-1);
 	return ((int)num);
+}
+
+long int	get_time(void)
+{
+	struct timeval time;
+	long int act_time;
+
+	gettimeofday(&time, NULL);
+	act_time = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+	return (act_time);
 }
 
 // int	diff_time(struct timeval start, struct timeval end)
