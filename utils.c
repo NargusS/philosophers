@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 17:17:37 by achane-l          #+#    #+#             */
-/*   Updated: 2022/01/22 17:36:09 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/01 17:21:42 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,7 @@ int atoi_modify(char *arg)
 	long long int	num;
 
 	num = 0;
-	if (*arg == 0)
-		return (-1);
-	if (*arg == '-')
+	if (*arg == 0 || *arg == '-' || *arg == '0')
 		return (-1);
 	while (*arg >= '0' && *arg <= '9')
 	{

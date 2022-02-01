@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 15:47:30 by achane-l          #+#    #+#             */
-/*   Updated: 2022/01/22 19:04:24 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/01 16:46:18 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,36 +20,34 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-typedef	struct my_philo
+typedef	struct s_philo
 {
-	pthread_t	philo;
-	int			id;
-	int			forks;
-	int			count_eats;
-	int			has_sleep;
-	int			has_eat;
-	int			has_think;
-	int			is_dead;
-}				my_philo;
+	pthread_t				philo_thread;
+	long int				last_meal;
+	int						id;
+	int						forks;
+	int						count_eats;
+	struct s_data_philos	*data;
+}				t_philo;
 
-typedef	struct lst_philo
+typedef struct s_data_philos
 {
-	my_philo		*philos;
-	pthread_mutex_t	mutex_philo;
+	pthread_t		control_thread;
+	pthread_mutex_t	*print_control;
 	long int		time_start;
-	int				current_philo;
+	int				is_end;
 	int				nb_of_philos;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				nb_of_eating;
-}				lst_philo;
-
+	t_philo			*lst_philo;
+}				t_data_philos;
 
 //					UTILS.C						//
 int atoi_modify(char *arg);
 long int	get_time(void);
 //					INIT.C						//
-int	init_lst_philo(lst_philo *philo_lst, int argc, char **argv);
-void	init_my_philo(my_philo *the_philo, int my_philo);
+int	init_dining(t_data_philos *data, int argc, char **argv);
+void	init_my_philo(t_philo *the_philo, int my_philo, t_data_philos *data);
 #endif
