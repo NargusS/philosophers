@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 15:47:30 by achane-l          #+#    #+#             */
-/*   Updated: 2022/02/01 16:46:18 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/02 19:41:34 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@
 typedef	struct s_philo
 {
 	pthread_t				philo_thread;
+	pthread_mutex_t			*forks;
 	long int				last_meal;
 	int						id;
-	int						forks;
 	int						count_eats;
 	struct s_data_philos	*data;
 }				t_philo;
@@ -49,5 +49,7 @@ int atoi_modify(char *arg);
 long int	get_time(void);
 //					INIT.C						//
 int	init_dining(t_data_philos *data, int argc, char **argv);
-void	init_my_philo(t_philo *the_philo, int my_philo, t_data_philos *data);
+void	init_my_philo(t_philo *the_philo, int my_philo, t_data_philos *data, pthread_mutex_t *forks);
+
+void    free_data(t_data_philos *data);
 #endif
