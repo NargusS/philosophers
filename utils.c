@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 17:17:37 by achane-l          #+#    #+#             */
-/*   Updated: 2022/02/01 17:21:42 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/11 18:49:20 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,46 @@ long int	get_time(void)
 	return (act_time);
 }
 
-// int	diff_time(struct timeval start, struct timeval end)
-// {
-// 	//fonction pour calculer la diff de temps entre le debut du progamme et le lancement des commandes
-// }
+void	custom_usleep(long int ms, t_data_philos *data)
+{
+	long int start_time;
+
+	start_time = get_time();
+	if (ms <= 0 || check_is_end(data) == 1)
+		return ;
+	while(get_time() - start_time < ms)
+	{
+		if (check_is_end(data) == 1)
+			break;
+		usleep(100);
+	}
+	return;
+}
+
+int	print_status(int message, t_philo *philo)
+{
+	long int current;
+
+	current = get_time();
+	pthread_mutex_lock(&philo->data->print_control);
+	if (check_is_end(philo->data) == 1)
+	{
+		pthread_mutex_unlock(&philo->data->print_control);
+		if (message == TAKEN_FORK || message == EAT)
+			unlock_fork(philo, philo->forks);
+		return (-1);
+	}
+	if (message == TAKEN_FORK)
+	{
+		printf("%ld %d has taken a fork\n", current - philo->time_start, philo->id);
+		printf("%ld %d has taken a fork\n", current - philo->time_start, philo->id);
+	}
+	else if (message == EAT)
+		printf("%ld %d is eating\n", current - philo->time_start, philo->id);
+	else if (message == SLEEP)
+		printf("%ld %d is sleeping\n", current - philo->time_start, philo->id);
+	else if (message == THINK)
+		printf("%ld %d is thinking\n", current - philo->time_start, philo->id);
+	pthread_mutex_unlock(&philo->data->print_control);
+	return (1);
+}

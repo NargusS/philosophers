@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 17:11:49 by achane-l          #+#    #+#             */
-/*   Updated: 2022/02/02 20:54:47 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/11 18:53:15 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 int	init_dining(t_data_philos *data, int argc, char **argv)
 {
-	pthread_mutex_t *forks;
-	int	i;
-
 	data->nb_of_philos = atoi_modify(argv[1]);
 	data->time_to_die = atoi_modify(argv[2]);
 	data->time_to_eat = atoi_modify(argv[3]);
@@ -29,38 +26,90 @@ int	init_dining(t_data_philos *data, int argc, char **argv)
 	data->time_to_eat == -1 || data->time_to_sleep == -1 || \
 	(data->nb_of_eating == -1 && argc == 6))
 		return (-1);
-	data->lst_philo = malloc(sizeof(t_philo) * data->nb_of_philos);
-	if (data == NULL)
-		return (-1);
-	forks = malloc(sizeof(pthread_mutex_t) * data->nb_of_philos);
-	if (forks == NULL)
-		return (-1);
-	i = 0;
-	while (i < data->nb_of_philos)
-	{
-		pthread_mutex_init(&forks[i], NULL);
-		i++;
-	}
 	data->time_start = get_time();
-	i = 0;
-	while (i < data->nb_of_philos)
-	{
-		init_my_philo(&data->lst_philo[i], i, data, forks);
-		i++;
-	}
-	data->print_control = malloc(sizeof(pthread_mutex_t));
-	if (data->print_control == NULL)
-		return (-1);
 	data->is_end = 0;
-	pthread_mutex_init(data->print_control, NULL);
+	if (init_lst_philos(data) == -1)
+		return (-1);
+	if (init_mutex(data) == -1)
+	{
+		free(data->lst_philo);
+		return (-1);
+	}
 	return (1);
 }
 
-void	init_my_philo(t_philo *the_philo, int my_philo, t_data_philos *data, pthread_mutex_t *forks)
+int		init_mutex(t_data_philos *data)
 {
-	the_philo->last_meal = get_time();
-	the_philo->id = my_philo + 1;
-	the_philo->forks = forks;
-	the_philo->count_eats = 0;
-	the_philo->data = data;
+	if (pthread_mutex_init(&data->print_control, NULL) != 0)
+		return (-1);
+	if (pthread_mutex_init(&data->is_end_control, NULL) != 0)
+		return (-1);
+	return (1);
+}
+
+pthread_mutex_t	*init_forks(int nb_of_philos)
+{
+	pthread_mutex_t *forks;
+	int i;
+
+	i = 0;
+	forks = malloc(sizeof(pthread_mutex_t) * nb_of_philos);
+	if (forks == NULL)
+		return (NULL);
+	while (i < nb_of_philos)
+	{
+		if (pthread_mutex_init(&forks[i], NULL) != 0)
+		{
+			free(forks);
+			return (NULL);
+		}
+		i++;
+	}
+	return (forks);
+}
+
+void	init_my_philo(t_philo *philo, int id, t_data_philos *data, pthread_mutex_t *forks)
+{
+	philo->forks = forks;
+	if (pthread_mutex_init(&philo->last_meal_control, NULL) != 0)
+		return ; // renvoyer une erreur 
+	if (pthread_mutex_init(&philo->count_eats_control, NULL) != 0)
+		return ; // renvoyer une erreur 
+	philo->last_meal = get_time();
+	philo->id = id + 1;
+	philo->count_eats = 0;
+	philo->time_start = data->time_start;
+	philo->nb_of_philos = data->nb_of_philos;
+	philo->time_to_die = data->time_to_die;
+	philo->time_to_eat = data->time_to_eat;
+	philo->time_to_sleep = data->time_to_sleep;
+	philo->nb_of_eating = philo->nb_of_eating;
+	philo->data = data;
+}
+
+
+int	init_lst_philos(t_data_philos *data)
+{
+	pthread_mutex_t *forks;
+	t_philo			*lst_philo;
+	int i;
+
+	i = 0;
+	forks = NULL;
+	lst_philo = malloc(sizeof(t_philo) * data->nb_of_philos);
+	if (lst_philo == NULL)
+		return (-1);
+	forks = init_forks(data->nb_of_philos);
+	if (forks == NULL)
+	{
+		free(lst_philo);
+		return (-1);
+	}
+	while (i < data->nb_of_philos)
+	{
+		init_my_philo(&lst_philo[i], i, data, forks);
+		i++;
+	}
+	data->lst_philo = lst_philo;
+	return (1);
 }

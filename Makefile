@@ -6,7 +6,7 @@
 #    By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/02 13:14:28 by achane-l          #+#    #+#              #
-#    Updated: 2022/02/02 16:10:51 by achane-l         ###   ########.fr        #
+#    Updated: 2022/02/11 18:49:19 by achane-l         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,9 @@ NAME =	philo
 SRCS =	philo.c\
 		init_philos.c\
 		free_utils.c\
+		control_routine.c\
+		philo_routine.c\
+		protect_mutex_func.c\
 		utils.c
 
 OBJS := ${SRCS:.c=.o}
@@ -21,7 +24,7 @@ OBJS := ${SRCS:.c=.o}
 all: ${NAME}
 	@printf "That's compile\n"
 $(NAME): ${OBJS}
-	@gcc -Wall -Werror -Wextra -o $(NAME) $(OBJS) -pthread -g3
+	@gcc -Wall -Werror -Wextra -o $(NAME) $(OBJS) -pthread -g
 %.o: %.c
 	$(CC) -Wall -Werror -Wextra -c $< -o $@
 clean:
