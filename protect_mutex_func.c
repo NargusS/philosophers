@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 16:33:29 by achane-l          #+#    #+#             */
-/*   Updated: 2022/02/11 18:55:48 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/12 11:40:21 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,19 @@ void	change_last_meal_value(t_philo *philo)
 	pthread_mutex_unlock(&philo->last_meal_control);
 }
 
-long int	get_last_meal(t_philo *philo)
-{
-    long int	value;
-	pthread_mutex_lock(&philo->last_meal_control);
-    value = philo->last_meal;
-	pthread_mutex_unlock(&philo->last_meal_control);
-    return (value);
-}
-
 void	add_eat(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->count_eats_control);
 	philo->count_eats++;
-	pthread_mutex_unlock(&philo->count_eats_control);	
+	pthread_mutex_unlock(&philo->count_eats_control);
 }
 
 int	get_count_eats(t_philo *philo)
 {
-	int count;
+	int	count;
+
 	pthread_mutex_lock(&philo->count_eats_control);
 	count = philo->count_eats;
 	pthread_mutex_unlock(&philo->count_eats_control);
-	return (count);	
+	return (count);
 }

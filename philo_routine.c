@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 12:31:40 by achane-l          #+#    #+#             */
-/*   Updated: 2022/02/11 19:11:05 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/12 11:35:48 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,26 +48,33 @@ int	eat_philo(t_philo *philo)
 	change_last_meal_value(philo);
 	if (print_status(EAT, philo) == -1)
 		return (-1);
-	custom_usleep(philo->time_to_eat, philo->data);
+	if (custom_usleep(philo->time_to_eat, philo->data) == -1)
+	{
+		unlock_fork(philo, philo->forks);
+		return (-1);
+	}
 	add_eat(philo);
 	unlock_fork(philo, philo->forks);
-	return(1);
+	return (1);
 }
 
 int	sleep_and_think_philo(t_philo *philo)
 {
 	if (print_status(SLEEP, philo) == -1)
 		return (-1);
-	custom_usleep(philo->time_to_sleep, philo->data);
+	if (custom_usleep(philo->time_to_sleep, philo->data) == -1)
+		return (-1);
 	if (print_status(THINK, philo) == -1)
 		return (-1);
-	custom_usleep((philo->time_to_die- (philo->time_to_eat + philo->time_to_sleep))/2,philo->data);	
+	if (custom_usleep((philo->time_to_die - (philo->time_to_eat + \
+	philo->time_to_sleep)) / 2, philo->data) == -1)
+		return (-1);
 	return (1);
 }
 
 void	*routine_philo(void *arg)
 {
-	t_philo *the_philo;
+	t_philo	*the_philo;
 
 	the_philo = (t_philo *)arg;
 	while (check_is_end(the_philo->data) == 0)

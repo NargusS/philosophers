@@ -6,13 +6,13 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 17:17:37 by achane-l          #+#    #+#             */
-/*   Updated: 2022/02/11 18:49:20 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/12 11:36:29 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int atoi_modify(char *arg)
+int	atoi_modify(char *arg)
 {
 	long long int	num;
 
@@ -33,54 +33,61 @@ int atoi_modify(char *arg)
 
 long int	get_time(void)
 {
-	struct timeval time;
-	long int act_time;
+	struct timeval	time;
+	long int		act_time;
 
 	gettimeofday(&time, NULL);
 	act_time = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 	return (act_time);
 }
 
-void	custom_usleep(long int ms, t_data_philos *data)
+int	custom_usleep(long int ms, t_data_philos *data)
 {
-	long int start_time;
+	long int	start_time;
 
 	start_time = get_time();
 	if (ms <= 0 || check_is_end(data) == 1)
-		return ;
-	while(get_time() - start_time < ms)
+		return (-1);
+	while (get_time() - start_time < ms)
 	{
 		if (check_is_end(data) == 1)
-			break;
+			return (1);
 		usleep(100);
 	}
-	return;
+	return (1);
 }
 
-int	print_status(int message, t_philo *philo)
+int	print_status(int message, t_philo *ph)
 {
-	long int current;
+	long int	current;
 
 	current = get_time();
-	pthread_mutex_lock(&philo->data->print_control);
-	if (check_is_end(philo->data) == 1)
+	pthread_mutex_lock(&ph->data->print_control);
+	if (check_is_end(ph->data) == 1)
 	{
-		pthread_mutex_unlock(&philo->data->print_control);
+		pthread_mutex_unlock(&ph->data->print_control);
 		if (message == TAKEN_FORK || message == EAT)
-			unlock_fork(philo, philo->forks);
+			unlock_fork(ph, ph->forks);
 		return (-1);
 	}
 	if (message == TAKEN_FORK)
 	{
-		printf("%ld %d has taken a fork\n", current - philo->time_start, philo->id);
-		printf("%ld %d has taken a fork\n", current - philo->time_start, philo->id);
+		printf("%ld %d has taken a fork\n", current - ph->time_start, ph->id);
+		printf("%ld %d has taken a fork\n", current - ph->time_start, ph->id);
 	}
 	else if (message == EAT)
-		printf("%ld %d is eating\n", current - philo->time_start, philo->id);
+		printf("%ld %d is eating\n", current - ph->time_start, ph->id);
 	else if (message == SLEEP)
-		printf("%ld %d is sleeping\n", current - philo->time_start, philo->id);
+		printf("%ld %d is sleeping\n", current - ph->time_start, ph->id);
 	else if (message == THINK)
-		printf("%ld %d is thinking\n", current - philo->time_start, philo->id);
-	pthread_mutex_unlock(&philo->data->print_control);
+		printf("%ld %d is thinking\n", current - ph->time_start, ph->id);
+	pthread_mutex_unlock(&ph->data->print_control);
 	return (1);
+}
+
+void	print_death(t_philo *philo, long int time_death)
+{
+	pthread_mutex_lock(&philo->data->print_control);
+	printf("%ld %d is dead\n", time_death - philo->data->time_start, philo->id);
+	pthread_mutex_unlock(&philo->data->print_control);
 }

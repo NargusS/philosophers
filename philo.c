@@ -6,7 +6,7 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 15:47:02 by achane-l          #+#    #+#             */
-/*   Updated: 2022/02/11 19:25:41 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/12 11:54:18 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,14 @@ int	launch_thread(t_data_philos *data, int even_or_odd)
 	return (1);
 }
 
+void	one_philo(t_philo *philo)
+{
+	printf("%ld %d has taken a fork\n", get_time() - philo->time_start, \
+	philo->id);
+	usleep(philo->time_to_die * 1000);
+	printf("%ld %d is dead\n", get_time() - philo->time_start, philo->id);
+}
+
 void	end_thread(t_data_philos *data)
 {
 	int	i;
@@ -47,17 +55,25 @@ int	main(int argc, char **argv)
 
 	if (argc < 5 || argc > 6 || init_dining(&data, argc, argv) == -1)
 		return (-1);
-	if (launch_thread(&data, 1) == -1)
+	if (data.nb_of_philos > 1)
 	{
-		free_data(&data);
-		return (-1);
+		if (launch_thread(&data, 1) == -1)
+		{
+			free_data(&data);
+			return (-1);
+		}
+		if (launch_thread(&data, 0) == -1)
+		{
+			free_data(&data);
+			return (-1);
+		}
+		routine_control((void *)&data);
+		end_thread(&data);
 	}
-	if (launch_thread(&data, 0) == -1)
+	else
 	{
+		one_philo(&data.lst_philo[0]);
 		free_data(&data);
-		return (-1);
 	}
-	routine_control((void *)&data);
-	end_thread(&data);
 	return (0);
 }

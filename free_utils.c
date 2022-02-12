@@ -6,27 +6,42 @@
 /*   By: achane-l <achane-l@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 15:55:03 by achane-l          #+#    #+#             */
-/*   Updated: 2022/02/11 19:10:46 by achane-l         ###   ########.fr       */
+/*   Updated: 2022/02/12 11:32:57 by achane-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./philo.h"
 
-void    free_data(t_data_philos *data)
+void	destroy_forks(pthread_mutex_t *forks, int i)
 {
-    int i;
-    
-    i = 0;
-    while (i < data->nb_of_philos)
-    {
-        pthread_mutex_destroy(&data->lst_philo[0].forks[i]);
-        pthread_mutex_destroy(&data->lst_philo[i].last_meal_control);
-        pthread_mutex_destroy(&data->lst_philo[i].count_eats_control);
-        i++;
-    }
-    //mutex last meal
-    free(data->lst_philo[0].forks);
-    free(data->lst_philo);
-    pthread_mutex_destroy(&data->print_control);
-    pthread_mutex_destroy(&data->is_end_control);
+	while (i >= 0)
+	{
+		pthread_mutex_destroy(&forks[i]);
+		i--;
+	}
+	free(forks);
+}
+
+void	destroy_mutex_of_philos(t_philo *philo, int i)
+{
+	while (i >= 0)
+	{
+		pthread_mutex_destroy(&(philo[i].last_meal_control));
+		pthread_mutex_destroy(&(philo[i].count_eats_control));
+		i--;
+	}
+	free(philo);
+}
+
+void	destroy_mutex_of_data(t_data_philos *data)
+{
+	pthread_mutex_destroy(&(data->print_control));
+	pthread_mutex_destroy(&(data->is_end_control));
+}
+
+void	free_data(t_data_philos *data)
+{
+	destroy_forks(data->lst_philo[0].forks, data->nb_of_philos - 1);
+	destroy_mutex_of_philos(data->lst_philo, data->nb_of_philos - 1);
+	destroy_mutex_of_data(data);
 }
